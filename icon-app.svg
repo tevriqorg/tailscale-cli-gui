@@ -1,0 +1,27 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with rounded corners for macOS app icon style -->
+  <rect width="1024" height="1024" rx="180" ry="180" fill="rgb(27, 24, 22)"/>
+
+  <!-- 3x3 grid of dots - scaled up from 64px design (factor of 16) -->
+  <!-- Padding: 16 * 16 = 256, spacing: 16 * 16 = 256 -->
+  <!-- Dot radius: 4.56 * 16 = 72.96 -->
+
+  <!-- Row 1: 1, 2, 3 -->
+  <circle cx="256" cy="256" r="73" fill="rgb(254, 253, 250)"/>
+  <circle cx="512" cy="256" r="73" fill="rgb(104, 101, 101)"/>
+  <circle cx="768" cy="256" r="73" fill="rgb(104, 101, 101)"/>
+
+  <!-- Row 2: 4, 5, 6 -->
+  <circle cx="256" cy="512" r="73" fill="rgb(254, 253, 250)"/>
+  <circle cx="512" cy="512" r="73" fill="rgb(254, 253, 250)"/>
+  <circle cx="768" cy="512" r="73" fill="rgb(254, 253, 250)"/>
+
+  <!-- Row 3: 7, 8, 9 -->
+  <circle cx="256" cy="768" r="73" fill="rgb(254, 253, 250)"/>
+  <circle cx="512" cy="768" r="73" fill="rgb(254, 253, 250)"/>
+  <circle cx="768" cy="768" r="73" fill="rgb(104, 101, 101)"/>
+
+  <!-- Caret: connect 1 -> 5 -> 7 (stroke-width: 9.12 * 16 = 145.92) -->
+  <line x1="256" y1="256" x2="512" y2="512" stroke="rgb(254, 253, 250)" stroke-width="146" stroke-linecap="round"/>
+  <line x1="512" y1="512" x2="256" y2="768" stroke="rgb(254, 253, 250)" stroke-width="146" stroke-linecap="round"/>
+</svg>
