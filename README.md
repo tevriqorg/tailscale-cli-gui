@@ -7,11 +7,14 @@ The Mac App Store version of Tailscale includes a GUI, but the open-source CLI v
 ## Features
 
 - Connection status with menu bar icon
+- Connect/disconnect
 - View/copy Tailscale IP address
 - View/copy current tailnet
-- Connect/disconnect
+- Toggle SSH server
 - Switch between multiple tailnets
-- Auto-refresh (30s) + network change detection
+- Auto-refresh + network change detection
+- Machines list with ip/hostname copy
+- Run at login
 
 ## Requirements
 
@@ -34,9 +37,8 @@ The app runs as a menu bar agent (no Dock icon).
 
 ## TODO
 
-- Settings screen with version and register for open on login
 - Exit node list and connection
 
 ## License
 
-MIT
+See [LICENSE](LICENSE)
