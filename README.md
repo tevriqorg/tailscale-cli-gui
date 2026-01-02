@@ -21,7 +21,7 @@ For those interested, total cost of the project was $55.79.
 
 ## ©️ Disclaimer and Acknowledgements
 
-Tailscale is a registered trademark of Tailscale Inc. This project is not
+"Tailscale" is a registered trademark of Tailscale Inc. This project is not
 affiliated with, endorsed by, or sponsored by Tailscale Inc. All Tailscale
 references, logos, and visual likenesses are the property of Tailscale Inc.
 
