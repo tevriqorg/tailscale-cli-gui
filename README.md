@@ -15,7 +15,7 @@ The Mac App Store version of Tailscale includes a GUI, but the open-source CLI v
 
 ## PLEASE NOTE
 
-This project is 100% vibe-coded. Let Claude write this utility while attending to other, more important work. Please audit the code before running.
+This project is 100% vibe-coded. We let Claude write this utility with supervision while attending to other, more important work. Please audit the code before running.
 
 ## Features
 
