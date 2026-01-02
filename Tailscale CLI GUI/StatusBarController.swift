@@ -93,6 +93,14 @@ class StatusBarController: NSObject, NSMenuDelegate {
         sshMenuItem.toolTip = "Enable or disable Tailscale SSH server"
         menu.addItem(sshMenuItem)
 
+        // Machines submenu (hidden initially until we have machines)
+        machinesMenuItem = NSMenuItem(title: "Machines", action: nil, keyEquivalent: "")
+        machinesMenuItem.toolTip = "Other machines on your tailnet"
+        machinesMenuItem.isHidden = true
+        machinesSubmenu = NSMenu()
+        machinesMenuItem.submenu = machinesSubmenu
+        menu.addItem(machinesMenuItem)
+
         // Connect
         connectMenuItem = NSMenuItem(title: "Connect", action: #selector(connectTailscale), keyEquivalent: "")
         connectMenuItem.target = self
@@ -116,14 +124,6 @@ class StatusBarController: NSObject, NSMenuDelegate {
         tailnetsSubmenu = NSMenu()
         tailnetsMenuItem.submenu = tailnetsSubmenu
         menu.addItem(tailnetsMenuItem)
-
-        // Machines submenu (hidden initially until we have machines)
-        machinesMenuItem = NSMenuItem(title: "Machines", action: nil, keyEquivalent: "")
-        machinesMenuItem.toolTip = "Other machines on your tailnet"
-        machinesMenuItem.isHidden = true
-        machinesSubmenu = NSMenu()
-        machinesMenuItem.submenu = machinesSubmenu
-        menu.addItem(machinesMenuItem)
 
         menu.addItem(NSMenuItem.separator())
 

@@ -158,16 +158,16 @@ Connected                    (or Disconnected/Status Unknown)
 IP: 100.100.27.25           (click to copy, dimmed if no IP)
 Tailnet: example-corp.com   (click to copy)
 Enable SSH                   (or Disable SSH, toggles SSH server)
-Disconnect                   (or Connect, based on state)
-────────────────────────────
-Tailnets                  ▶  (only if 2+ tailnets)
-  ✓ example-corp.com
-    other-tailnet.com
 Machines                  ▶  (only if online machines exist)
   Tagged                  ▶  (only if tagged devices exist)
     ● server-1               (click to copy IP, Option-click for domain)
   User Name               ▶  (one submenu per user)
     ● laptop
+Disconnect                   (or Connect, based on state)
+────────────────────────────
+Tailnets                  ▶  (only if 2+ tailnets)
+  ✓ example-corp.com
+    other-tailnet.com
 ────────────────────────────
 Refresh                      (Option key to show)
 Settings...
