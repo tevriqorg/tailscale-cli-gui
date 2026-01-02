@@ -13,11 +13,13 @@ A macOS menu bar app for the [open-source/Homebrew Tailscale installation](https
 
 The Mac App Store version of Tailscale includes a GUI, but the open-source CLI version (which [supports certain features](https://tailscale.com/kb/1065/macos-variants#comparison-table) like SSH hosting) does not. This app bridges that gap.
 
-## PLEASE NOTE
+## ⚠️ PLEASE NOTE
 
-This project is 100% vibe-coded. We let Claude write this utility with supervision while attending to other, more important work. Please audit the code before running.
+This project is 100% vibe-coded. We let Claude Opus 4.5 write this utility (with supervision) while attending to other, more important work. Please audit the code before running.
 
-## Disclaimer and Acknowledgements
+For those interested, total cost of the project was $55.79.
+
+## ©️ Disclaimer and Acknowledgements
 
 Tailscale is a registered trademark of Tailscale Inc. This project is not
 affiliated with, endorsed by, or sponsored by Tailscale Inc. All Tailscale
@@ -25,7 +27,7 @@ references, logos, and visual likenesses are the property of Tailscale Inc.
 
 WireGuard is a registered trademark of Jason A. Donenfeld.
 
-## Features
+## 📝 Features
 
 - Connection status with menu bar icon
 - Connect/disconnect
@@ -37,12 +39,12 @@ WireGuard is a registered trademark of Jason A. Donenfeld.
 - Machines list with ip/hostname copy
 - Run at login
 
-## Requirements
+## ☑️ Requirements
 
 - macOS 13.0+
 - Tailscale CLI installed (`brew install tailscale`)
 
-## Build
+## 🧑‍💻 Build
 
 ```bash
 xcodebuild -scheme "Tailscale CLI GUI" -configuration Release build
@@ -50,12 +52,12 @@ xcodebuild -scheme "Tailscale CLI GUI" -configuration Release build
 
 Or open `Tailscale CLI GUI.xcodeproj` in Xcode and build.
 
-## Install
+## 💾 Install
 
 Copy `Tailscale CLI GUI.app` to `/Applications`.
 
 The app runs as a menu bar agent (no Dock icon).
 
-## License
+## 🪪 License
 
 See [LICENSE](LICENSE)
