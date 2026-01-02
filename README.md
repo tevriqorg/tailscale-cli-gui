@@ -1,5 +1,7 @@
 # Tailscale CLI GUI
 
+<img width="334" height="299" alt="Screen Shot 2026-01-01 at 8 43 41 PM" src="https://github.com/user-attachments/assets/d318ac97-c5e4-42e9-b8a1-7fcf49372d5e" />
+
 A macOS menu bar app for the open-source/Homebrew Tailscale installation.
 
 The Mac App Store version of Tailscale includes a GUI, but the open-source CLI version (which supports advanced features like SSH hosting) does not. This app bridges that gap.
