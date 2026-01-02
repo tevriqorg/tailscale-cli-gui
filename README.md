@@ -1,7 +1,13 @@
-# Tailscale CLI GUI
+<p align="center">
+  <img style="vertical-align: middle;" width="100" height="100" alt="icon_1024" src="https://github.com/user-attachments/assets/eb5d171d-e51c-4151-b806-615d0942fef3" />
+</p>
+<h1 align="center">Tailscale CLI GUI</h1>
 
-<img width="257" height="311" alt="tailscale-cli-gui-ss1" src="https://github.com/user-attachments/assets/b6f73437-ee47-483c-8bd9-8c792bf73418" />
+<p align="center">
+  <img width="257" height="311" alt="tailscale-cli-gui-ss1" src="https://github.com/user-attachments/assets/b6f73437-ee47-483c-8bd9-8c792bf73418" />
+</p>
 
+---
 
 A macOS menu bar app for the open-source/Homebrew Tailscale installation.
 
