@@ -17,6 +17,14 @@ The Mac App Store version of Tailscale includes a GUI, but the open-source CLI v
 
 This project is 100% vibe-coded. We let Claude write this utility with supervision while attending to other, more important work. Please audit the code before running.
 
+## Disclaimer and Acknowledgements
+
+Tailscale is a registered trademark of Tailscale Inc. This project is not
+affiliated with, endorsed by, or sponsored by Tailscale Inc. All Tailscale
+references, logos, and visual likenesses are the property of Tailscale Inc.
+
+WireGuard is a registered trademark of Jason A. Donenfeld.
+
 ## Features
 
 - Connection status with menu bar icon
