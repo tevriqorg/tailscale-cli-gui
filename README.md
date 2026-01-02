@@ -48,10 +48,6 @@ Copy `Tailscale CLI GUI.app` to `/Applications`.
 
 The app runs as a menu bar agent (no Dock icon).
 
-## TODO
-
-- Exit node list and connection
-
 ## License
 
 See [LICENSE](LICENSE)
