@@ -5,7 +5,7 @@
 
 A macOS menu bar app for the open-source/Homebrew Tailscale installation.
 
-The Mac App Store version of Tailscale includes a GUI, but the open-source CLI version (which supports advanced features like SSH hosting) does not. This app bridges that gap.
+The Mac App Store version of Tailscale includes a GUI, but the open-source CLI version (which [supports certain features](https://tailscale.com/kb/1065/macos-variants#comparison-table) like SSH hosting) does not. This app bridges that gap.
 
 ## PLEASE NOTE
 
