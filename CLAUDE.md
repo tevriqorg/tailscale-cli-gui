@@ -32,7 +32,7 @@ Tailscale CLI GUI/
 1. `StatusBarController` owns the UI and refresh logic
 2. `TailscaleService` (Swift Actor) handles all CLI commands with mutex protection
 3. `TailscaleStatus.swift` defines shared data types
-4. Refresh triggers: Timer (30s), NWPathMonitor (network changes), menu open, manual
+4. Refresh triggers: Timer (5 min), NWPathMonitor (network changes), menu open, manual
 
 ### Key Design Decisions
 

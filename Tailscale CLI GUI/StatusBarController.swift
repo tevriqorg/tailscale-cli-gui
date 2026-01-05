@@ -33,7 +33,7 @@ class StatusBarController: NSObject, NSMenuDelegate {
     private var machinesMenuItem: NSMenuItem!
     private var machinesSubmenu: NSMenu!
 
-    private let refreshInterval: TimeInterval = 30.0
+    private let refreshInterval: TimeInterval = 300.0
 
     // Working animation
     private var workingAnimationTimer: Timer?
@@ -428,6 +428,19 @@ class StatusBarController: NSObject, NSMenuDelegate {
             disconnectMenuItem.isHidden = true
         }
 
+        // Update status bar button tooltip
+        if let tailnet = info.currentTailnet {
+            let statusText: String
+            switch info.state {
+            case .connected: statusText = "Connected"
+            case .disconnected: statusText = "Disconnected"
+            case .unknown: statusText = "Unknown"
+            }
+            statusItem.button?.toolTip = "\(tailnet): \(statusText)"
+        } else {
+            statusItem.button?.toolTip = "Logged out"
+        }
+
         // Update tailnets submenu
         updateTailnetsSubmenu(with: info.tailnets)
 
@@ -579,6 +592,7 @@ class StatusBarController: NSObject, NSMenuDelegate {
     private func updateUIForMissingBinary() {
         stopWorkingAnimation()
         statusItem.button?.image = NSImage(named: "icon-error")
+        statusItem.button?.toolTip = "Tailscale CLI not found"
         statusMenuItem.title = "Tailscale CLI Not Found"
         ipMenuItem.title = "Install: brew install tailscale"
         ipMenuItem.isEnabled = false
