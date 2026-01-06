@@ -52,6 +52,12 @@ xcodebuild -scheme "Tailscale CLI GUI" -configuration Release build
 
 Or open `Tailscale CLI GUI.xcodeproj` in Xcode and build.
 
+**Note:** You'll need to set your own Development Team in Xcode before building. Go to the project settings, select the "Tailscale CLI GUI" target, and under "Signing & Capabilities" choose your team from the dropdown.
+
+## 🤝 Contributing
+
+Contributions are welcome! When submitting a PR, please ensure your `DEVELOPMENT_TEAM` is removed from `project.pbxproj` to avoid committing your personal Apple Developer Team ID.
+
 ## 💾 Install
 
 Copy `Tailscale CLI GUI.app` to `/Applications`.

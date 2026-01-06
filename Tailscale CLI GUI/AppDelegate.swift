@@ -2,8 +2,6 @@
 //  AppDelegate.swift
 //  Tailscale CLI GUI
 //
-//  Created by David Martorana on 12/31/25.
-//
 
 import Cocoa
 

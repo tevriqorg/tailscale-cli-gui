@@ -155,7 +155,7 @@ Returns JSON with `Peer` and `User` dictionaries:
 
 ```
 Connected                    (or Disconnected/Status Unknown)
-IP: 100.100.27.25           (click to copy, dimmed if no IP)
+IP: 100.x.x.x               (click to copy, dimmed if no IP)
 Tailnet: example-corp.com   (click to copy)
 Enable SSH                   (or Disable SSH, toggles SSH server)
 Machines                  ▶  (only if online machines exist)
