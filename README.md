@@ -15,7 +15,7 @@ The Mac App Store version of Tailscale includes a GUI, but the open-source CLI v
 
 ## ⚠️ PLEASE NOTE
 
-This project is 100% vibe-coded. We let Claude Opus 4.5 write this utility (with supervision) while attending to other, more important work. Please audit the code before running.
+This project is 99% vibe-coded. We let Claude Opus 4.5 write this utility (with supervision) while attending to other, more important work. Please audit the code before running.
 
 For those interested, total cost of the project was $55.79.
 
