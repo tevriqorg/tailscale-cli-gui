@@ -36,6 +36,19 @@ struct TailscaleUser: Equatable {
     }
 }
 
+struct ExitNode: Equatable {
+    let id: String
+    let hostname: String
+    let dnsName: String
+    let isOnline: Bool
+    let ipAddress: String?
+    let isCurrent: Bool
+
+    var displayName: String {
+        hostname.components(separatedBy: ".").first ?? hostname
+    }
+}
+
 struct Machine: Equatable {
     let hostname: String
     let dnsName: String
@@ -62,16 +75,27 @@ struct TailscaleInfo {
     let currentAccount: String?
     let tailnets: [TailnetAccount]
     let sshEnabled: Bool
+    let exitNodes: [ExitNode]
+    let currentExitNode: ExitNode?
     let machines: [Machine]
     let users: [String: TailscaleUser]
 
-    static let disconnected = TailscaleInfo(state: .disconnected, ipAddress: nil, currentTailnet: nil, currentAccount: nil, tailnets: [], sshEnabled: false, machines: [], users: [:])
-    static let unknown = TailscaleInfo(state: .unknown, ipAddress: nil, currentTailnet: nil, currentAccount: nil, tailnets: [], sshEnabled: false, machines: [], users: [:])
+    static let disconnected = TailscaleInfo(state: .disconnected, ipAddress: nil, currentTailnet: nil, currentAccount: nil, tailnets: [], sshEnabled: false, exitNodes: [], currentExitNode: nil, machines: [], users: [:])
+    static let unknown = TailscaleInfo(state: .unknown, ipAddress: nil, currentTailnet: nil, currentAccount: nil, tailnets: [], sshEnabled: false, exitNodes: [], currentExitNode: nil, machines: [], users: [:])
 }
 
-enum TailscaleBinaryError: Error {
+enum TailscaleBinaryError: Error, LocalizedError {
     case notFound
     case executionFailed(String)
+
+    var errorDescription: String? {
+        switch self {
+        case .notFound:
+            return "Tailscale binary not found"
+        case .executionFailed(let detail):
+            return detail
+        }
+    }
 }
 
 enum TailscaleSwitchError: Error, LocalizedError {
