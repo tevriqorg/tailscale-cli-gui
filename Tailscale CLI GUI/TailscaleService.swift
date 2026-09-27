@@ -74,6 +74,27 @@ actor TailscaleService {
         }
     }
 
+    func setExitNode(_ node: ExitNode?) async -> Result<Void, TailscaleBinaryError> {
+        guard let binary = binaryPath else {
+            logger.error("Cannot set exit node: binary not found")
+            return .failure(.notFound)
+        }
+
+        let target = node?.ipAddress ?? node?.hostname ?? ""
+        logger.info("Setting exit node to: \(target.isEmpty ? "Direct" : target)")
+
+        do {
+            _ = try await runCommand(binary, arguments: ["set", "--exit-node=\(target)"])
+            return .success(())
+        } catch let error as TailscaleBinaryError {
+            logger.error("Exit node switch failed: \(error.localizedDescription)")
+            return .failure(error)
+        } catch {
+            logger.error("Exit node switch failed: \(error.localizedDescription)")
+            return .failure(.executionFailed(error.localizedDescription))
+        }
+    }
+
     func switchTailnet(id: String, wasConnected: Bool) async -> Result<Void, TailscaleSwitchError> {
         guard let binary = binaryPath else {
             logger.error("Cannot switch: binary not found")
@@ -192,9 +213,10 @@ actor TailscaleService {
         async let statusTask = getConnectionStatus(binary: binary)
         async let tailnetTask = getTailnets(binary: binary)
         async let sshTask = getSSHEnabled(binary: binary)
+        async let exitNodeTask = getExitNodes(binary: binary)
         async let machinesTask = getMachines(binary: binary)
 
-        let (statusResult, tailnetResult, sshEnabled, machinesResult) = await (statusTask, tailnetTask, sshTask, machinesTask)
+        let (statusResult, tailnetResult, sshEnabled, exitNodeResult, machinesResult) = await (statusTask, tailnetTask, sshTask, exitNodeTask, machinesTask)
 
         // Find current tailnet from the list (for account info)
         let current = tailnetResult.first { $0.isCurrent }
@@ -206,6 +228,8 @@ actor TailscaleService {
             currentAccount: current?.account,
             tailnets: tailnetResult,
             sshEnabled: sshEnabled,
+            exitNodes: exitNodeResult.nodes,
+            currentExitNode: exitNodeResult.current,
             machines: machinesResult.machines,
             users: machinesResult.users
         )
@@ -328,6 +352,51 @@ actor TailscaleService {
         return sshEnabled
     }
 
+    private func getExitNodes(binary: String) async -> (nodes: [ExitNode], current: ExitNode?) {
+        guard let output = try? await runCommand(binary, arguments: ["status", "--json", "--self=false"]) else {
+            logger.error("Failed to read exit nodes from tailscale status")
+            return ([], nil)
+        }
+
+        guard let data = output.data(using: .utf8),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let peerDict = json["Peer"] as? [String: [String: Any]] else {
+            logger.error("Failed to parse exit nodes from tailscale status JSON")
+            return ([], nil)
+        }
+
+        var nodes: [ExitNode] = []
+
+        for (_, peerInfo) in peerDict {
+            guard peerInfo["ExitNodeOption"] as? Bool == true else { continue }
+
+            let hostname = peerInfo["HostName"] as? String ?? ""
+            let dnsName = peerInfo["DNSName"] as? String ?? ""
+            let id = peerInfo["ID"] as? String ?? ""
+            let isOnline = peerInfo["Online"] as? Bool ?? false
+            let isCurrent = peerInfo["ExitNode"] as? Bool ?? false
+            let tailscaleIPs = peerInfo["TailscaleIPs"] as? [String] ?? []
+            let ipv4 = tailscaleIPs.first { $0.contains(".") }
+
+            nodes.append(ExitNode(
+                id: id,
+                hostname: hostname,
+                dnsName: dnsName,
+                isOnline: isOnline,
+                ipAddress: ipv4,
+                isCurrent: isCurrent
+            ))
+        }
+
+        nodes.sort {
+            if $0.isCurrent != $1.isCurrent { return $0.isCurrent }
+            if $0.isOnline != $1.isOnline { return $0.isOnline }
+            return $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending
+        }
+
+        return (nodes, nodes.first { $0.isCurrent })
+    }
+
     private func getMachines(binary: String) async -> (machines: [Machine], users: [String: TailscaleUser]) {
         guard let output = try? await runCommand(binary, arguments: ["status", "--json", "--self=false"]) else {
             logger.error("Failed to run tailscale status --json --self=false command")
@@ -430,11 +499,18 @@ actor TailscaleService {
                 let data = pipe.fileHandleForReading.readDataToEndOfFile()
                 process.waitUntilExit()
 
-                if let output = String(data: data, encoding: .utf8) {
-                    continuation.resume(returning: output)
-                } else {
-                    continuation.resume(throwing: TailscaleBinaryError.executionFailed("Failed to decode output"))
+                let output = String(data: data, encoding: .utf8) ?? ""
+
+                guard process.terminationReason == .exit, process.terminationStatus == 0 else {
+                    let detail = output.trimmingCharacters(in: .whitespacesAndNewlines)
+                    let message = detail.isEmpty
+                        ? "Command failed with exit code \(process.terminationStatus)"
+                        : "Command failed with exit code \(process.terminationStatus): \(detail)"
+                    continuation.resume(throwing: TailscaleBinaryError.executionFailed(message))
+                    return
                 }
+
+                continuation.resume(returning: output)
             } catch {
                 continuation.resume(throwing: error)
             }

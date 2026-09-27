@@ -32,6 +32,8 @@ class StatusBarController: NSObject, NSMenuDelegate {
     private var refreshMenuItem: NSMenuItem!
     private var machinesMenuItem: NSMenuItem!
     private var machinesSubmenu: NSMenu!
+    private var exitNodesMenuItem: NSMenuItem!
+    private var exitNodesSubmenu: NSMenu!
 
     private let refreshInterval: TimeInterval = 300.0
 
@@ -100,6 +102,13 @@ class StatusBarController: NSObject, NSMenuDelegate {
         machinesSubmenu = NSMenu()
         machinesMenuItem.submenu = machinesSubmenu
         menu.addItem(machinesMenuItem)
+
+        // Exit Nodes submenu
+        exitNodesMenuItem = NSMenuItem(title: "Exit Node", action: nil, keyEquivalent: "")
+        exitNodesMenuItem.toolTip = "Temporarily route internet traffic through another Tailscale device"
+        exitNodesSubmenu = NSMenu()
+        exitNodesMenuItem.submenu = exitNodesSubmenu
+        menu.addItem(exitNodesMenuItem)
 
         // Connect
         connectMenuItem = NSMenuItem(title: "Connect", action: #selector(connectTailscale), keyEquivalent: "")
@@ -447,8 +456,84 @@ class StatusBarController: NSObject, NSMenuDelegate {
         // Update machines submenu
         updateMachinesSubmenu(with: info.machines, users: info.users)
 
+        // Update exit node submenu
+        updateExitNodesSubmenu(with: info.exitNodes, current: info.currentExitNode)
+
         // Update SSH menu item
         sshMenuItem.title = info.sshEnabled ? "Disable SSH" : "Enable SSH"
+    }
+
+    private func updateExitNodesSubmenu(with exitNodes: [ExitNode], current: ExitNode?) {
+        exitNodesSubmenu.removeAllItems()
+
+        let directItem = NSMenuItem(title: "Direct (No Exit Node)", action: #selector(disableExitNode), keyEquivalent: "")
+        directItem.target = self
+        directItem.state = current == nil ? .on : .off
+        directItem.toolTip = "Use the normal internet connection"
+        exitNodesSubmenu.addItem(directItem)
+
+        if !exitNodes.isEmpty {
+            exitNodesSubmenu.addItem(NSMenuItem.separator())
+        }
+
+        for node in exitNodes {
+            let item = NSMenuItem(title: node.displayName, action: #selector(exitNodeItemClicked(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = node
+            item.state = node.isCurrent ? .on : .off
+            item.isEnabled = node.isOnline || node.isCurrent
+
+            var tooltip = node.isOnline ? "Use this device as the exit node" : "Exit node is offline"
+            if let ip = node.ipAddress {
+                tooltip += " • \(ip)"
+            }
+            item.toolTip = tooltip
+            exitNodesSubmenu.addItem(item)
+        }
+    }
+
+    @objc private func disableExitNode() {
+        guard currentInfo.currentExitNode != nil else { return }
+        setWorkingIcon()
+
+        Task {
+            let result = await tailscaleService.setExitNode(nil)
+            switch result {
+            case .success:
+                await performRefresh(reason: "after disabling exit node")
+                if currentInfo.currentExitNode != nil {
+                    showErrorAlert(title: "Exit Node Still Active", message: "Tailscale accepted the command, but an exit node is still active.")
+                }
+            case .failure(let error):
+                await performRefresh(reason: "after failed exit node disable")
+                showErrorAlert(title: "Exit Node Change Failed", message: error.localizedDescription)
+            }
+        }
+    }
+
+    @objc private func exitNodeItemClicked(_ sender: NSMenuItem) {
+        guard let node = sender.representedObject as? ExitNode else { return }
+        if node.isCurrent { return }
+
+        setWorkingIcon()
+
+        Task {
+            let result = await tailscaleService.setExitNode(node)
+            switch result {
+            case .success:
+                await performRefresh(reason: "after exit node switch")
+                let current = currentInfo.currentExitNode
+                let matchesByID = !node.id.isEmpty && current?.id == node.id
+                let matchesByIP = node.ipAddress != nil && current?.ipAddress == node.ipAddress
+                guard matchesByID || matchesByIP else {
+                    showErrorAlert(title: "Exit Node Not Applied", message: "Tailscale accepted the command, but the selected exit node is not active.")
+                    return
+                }
+            case .failure(let error):
+                await performRefresh(reason: "after failed exit node switch")
+                showErrorAlert(title: "Exit Node Change Failed", message: error.localizedDescription)
+            }
+        }
     }
 
     private func updateTailnetsSubmenu(with tailnets: [TailnetAccount]) {
@@ -597,6 +682,7 @@ class StatusBarController: NSObject, NSMenuDelegate {
         ipMenuItem.title = "Install: brew install tailscale"
         ipMenuItem.isEnabled = false
         tailnetMenuItem.isHidden = true
+        exitNodesMenuItem.isHidden = true
 
         // Show alert
         let alert = NSAlert()
