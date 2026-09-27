@@ -34,6 +34,7 @@ WireGuard is a registered trademark of Jason A. Donenfeld.
 - View/copy Tailscale IP address
 - View/copy current tailnet
 - Toggle SSH server
+- Temporarily select or disable an exit node from the menu bar
 - Switch between multiple tailnets
 - Auto-refresh + network change detection
 - Machines list with ip/hostname copy
@@ -43,6 +44,7 @@ WireGuard is a registered trademark of Jason A. Donenfeld.
 
 - macOS 13.0+
 - Tailscale CLI installed (`brew install tailscale`)
+- At least one approved exit node in the tailnet to use the exit-node switcher
 
 ## 🧑‍💻 Build
 
