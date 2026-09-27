@@ -522,8 +522,10 @@ class StatusBarController: NSObject, NSMenuDelegate {
             switch result {
             case .success:
                 await performRefresh(reason: "after exit node switch")
-                guard currentInfo.currentExitNode?.id == node.id ||
-                      currentInfo.currentExitNode?.ipAddress == node.ipAddress else {
+                let current = currentInfo.currentExitNode
+                let matchesByID = !node.id.isEmpty && current?.id == node.id
+                let matchesByIP = node.ipAddress != nil && current?.ipAddress == node.ipAddress
+                guard matchesByID || matchesByIP else {
                     showErrorAlert(title: "Exit Node Not Applied", message: "Tailscale accepted the command, but the selected exit node is not active.")
                     return
                 }
