@@ -360,7 +360,7 @@ actor TailscaleService {
                     continue
                 }
 
-                let hostname = peerInfo["HostName"] as? String ?? ""
+                var hostname = peerInfo["HostName"] as? String ?? ""
                 let dnsName = peerInfo["DNSName"] as? String ?? ""
 
                 // Also skip if DNSName contains mullvad (backup check)
@@ -368,11 +368,20 @@ actor TailscaleService {
                     continue
                 }
 
-                // Only include online machines
-                let isOnline = peerInfo["Online"] as? Bool ?? false
-                if !isOnline {
-                    continue
+                // iOS devices report their hostname as "localhost": the OS only hands out
+                // the user-assigned device name to apps holding the
+                // com.apple.developer.device-information.user-assigned-device-name entitlement,
+                // which the Tailscale iOS app does not have. Fall back to the machine name
+                // taken from the DNS name ("iphone-12-pro.tail1234.ts.net." -> "iphone-12-pro").
+                let normalizedHostname = hostname.lowercased()
+                if hostname.isEmpty || normalizedHostname == "localhost" || normalizedHostname == "localhost.localdomain" {
+                    let dnsLabel = dnsName.split(separator: ".").first.map(String.init) ?? ""
+                    if !dnsLabel.isEmpty {
+                        hostname = dnsLabel
+                    }
                 }
+
+                let isOnline = peerInfo["Online"] as? Bool ?? false
 
                 let os = peerInfo["OS"] as? String
                 let userId: String
@@ -399,10 +408,16 @@ actor TailscaleService {
             }
         }
 
-        // Sort machines by hostname
-        machines.sort { $0.hostname.lowercased() < $1.hostname.lowercased() }
+        // Sort machines online first, then by hostname
+        machines.sort { machine1, machine2 in
+            if machine1.isOnline != machine2.isOnline {
+                return machine1.isOnline
+            }
+            return machine1.hostname.lowercased() < machine2.hostname.lowercased()
+        }
 
-        logger.info("Found \(machines.count) machines (excluding Mullvad nodes)")
+        let onlineCount = machines.filter { $0.isOnline }.count
+        logger.info("Found \(machines.count) machines (\(onlineCount) online, excluding Mullvad nodes)")
         return (machines, users)
     }
 

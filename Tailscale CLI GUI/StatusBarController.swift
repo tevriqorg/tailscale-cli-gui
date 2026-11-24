@@ -552,17 +552,26 @@ class StatusBarController: NSObject, NSMenuDelegate {
         item.target = self
         item.representedObject = machine
 
-        // Show online status with a dot prefix
+        // Show online status with a dot prefix: filled when online, hollow and
+        // greyed out when the machine is offline
+        let symbolName = machine.isOnline ? "circle.fill" : "circle"
+        let description = machine.isOnline ? "Online" : "Offline"
+
         if machine.isOnline {
-            item.image = NSImage(systemSymbolName: "circle.fill", accessibilityDescription: "Online")
+            item.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: description)
             item.image?.isTemplate = true
         } else {
-            item.image = NSImage(systemSymbolName: "circle", accessibilityDescription: "Offline")
-            item.image?.isTemplate = true
+            let dimmedColor = NSColor.disabledControlTextColor
+            item.attributedTitle = NSAttributedString(
+                string: title,
+                attributes: [.foregroundColor: dimmedColor]
+            )
+            item.image = NSImage(systemSymbolName: symbolName, accessibilityDescription: description)?
+                .withSymbolConfiguration(NSImage.SymbolConfiguration(paletteColors: [dimmedColor]))
         }
 
         // Tooltip with more details
-        var tooltip = "Click to copy IP"
+        var tooltip = machine.isOnline ? "Click to copy IP" : "Offline — click to copy IP"
         if machine.ipAddress != nil {
             tooltip += " • Option-click for domain"
         }

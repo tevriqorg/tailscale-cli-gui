@@ -68,9 +68,10 @@ Tailscale CLI GUI/
 - Errors shown in alert dialog
 
 ### Machines List
-- Shows online machines on the tailnet (excludes Mullvad exit nodes)
+- Shows all machines on the tailnet (excludes Mullvad exit nodes), online ones first
 - Organized into "Tagged" (tagged-devices) and user submenus
-- Online status shown with filled circle icon
+- Online status shown with filled circle icon; offline machines get a hollow circle and a greyed-out title, but stay clickable
+- Display name comes from `HostName`, falling back to the first label of `DNSName` when the host reports `localhost` — all iOS devices do, because iOS only exposes the user-assigned device name to apps with the `user-assigned-device-name` entitlement
 - Click copies IPv4 address, Option-click copies Tailscale domain name
 
 ## CLI Commands Used
@@ -139,7 +140,7 @@ Returns JSON with preferences:
 ### `tailscale status --json --self=false`
 Returns JSON with `Peer` and `User` dictionaries:
 - `Peer`: Dictionary keyed by nodekey, each peer has:
-  - `HostName`: device name
+  - `HostName`: device name (iOS devices report `localhost`; the app falls back to the `DNSName` label)
   - `DNSName`: full DNS name (e.g., "device.tailnet.ts.net.")
   - `OS`: operating system (macOS, iOS, android, linux, etc.)
   - `UserID`: numeric user ID (matches keys in `User` dict)
@@ -158,7 +159,7 @@ Connected                    (or Disconnected/Status Unknown)
 IP: 100.x.x.x               (click to copy, dimmed if no IP)
 Tailnet: example-corp.com   (click to copy)
 Enable SSH                   (or Disable SSH, toggles SSH server)
-Machines                  ▶  (only if online machines exist)
+Machines                  ▶  (only if machines exist)
   Tagged                  ▶  (only if tagged devices exist)
     ● server-1               (click to copy IP, Option-click for domain)
   User Name               ▶  (one submenu per user)
